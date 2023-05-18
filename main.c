@@ -31,6 +31,11 @@ int main(void)
 			line[nread - 1] = '\0';
 		if (strcmp(line, "exit") == 0) /* exit the shell if the command is exit */
 			exit_shell();
+		if (strcmp(line, "env") == 0) /* print the environment if the command is env */
+		{
+			print_env(); /* call the print_env function */
+			continue; /* skip forking and go to next iteration */
+		}
 		argc = 0; /* initialize the argument count to zero */
 		token = strtok(line, DELIM); /* get the first token from the line */
 		while (token != NULL) /* loop through all tokens */

@@ -36,7 +36,7 @@ char *find_path(char *command)
 		/* allocate memory for the full path */
 		full_path = malloc(strlen(dir) + strlen(command) + 2);
 		if (!full_path) /* error in malloc */
-		return (NULL);
+			return (NULL);
 		/* concatenate the directory and the command with a slash */
 		sprintf(full_path, "%s/%s", dir, command);
 		if (file_exists(full_path)) /* file exists and is executable */

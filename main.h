@@ -16,5 +16,6 @@
 char *find_path(char *command);
 int file_exists(char *path);
 void exit_shell(void);
+void print_env(void);
 
 #endif
