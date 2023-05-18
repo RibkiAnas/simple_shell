@@ -11,6 +11,8 @@ int main(void)
 	size_t len = 0; /* length of the buffer */
 	ssize_t nread; /* number of bytes read */
 	char *argv[MAXLINE]; /* array of arguments for execve */
+	int argc; /* number of arguments */
+	char *token; /* pointer to a token */
 	int status; /* status of the child process */
 	pid_t pid; /* process id of the child */
 
@@ -27,8 +29,15 @@ int main(void)
 			line[nread - 1] = '\0';
 		if (strcmp(line, "exit") == 0) /* exit the shell if the command is exit */
 			break;
-		argv[0] = line; /* set the first argument to the command */
-		argv[1] = NULL; /* set the second argument to NULL */
+		argc = 0; /* initialize the argument count to zero */
+		token = strtok(line, DELIM); /* get the first token from the line */
+		while (token != NULL) /* loop through all tokens */
+		{
+			argv[argc] = token; /* set the argument to the token */
+			argc++; /* increment the argument count */
+			token = strtok(NULL, DELIM); /* get the next token from the line */
+		}
+		argv[argc] = NULL; /* set the second argument to NULL */
 		pid = fork(); /* create a new process */
 		if (pid < 0) /* error in fork */
 		{
@@ -37,8 +46,8 @@ int main(void)
 		}
 		else if (pid == 0) /* child process */
 		{
-			execve(line, argv, NULL); /* execute the command with no environment variables */
-			perror(line); /* print an error message if execve fails */
+			execve(argv[0], argv, NULL); /* execute the command with no environment variables */
+			perror(argv[0]); /* print an error message if execve fails */
 			exit(1); /* exit with status 1 */
 		}
 		else /* parent process */
