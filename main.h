@@ -9,5 +9,6 @@
 
 #define MAXLINE 1024 /* maximum length of a command line */
 #define PROMPT "$ " /* prompt symbol */
+#define DELIM " \t\n" /* delimiters for strtok */
 
 #endif
