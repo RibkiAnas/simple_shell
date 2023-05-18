@@ -15,5 +15,6 @@
 /* function prototypes */
 char *find_path(char *command);
 int file_exists(char *path);
+void exit_shell(void);
 
 #endif

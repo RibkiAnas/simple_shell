@@ -30,7 +30,7 @@ int main(void)
 		if (line[nread - 1] == '\n') /* remove the trailing newline */
 			line[nread - 1] = '\0';
 		if (strcmp(line, "exit") == 0) /* exit the shell if the command is exit */
-			break;
+			exit_shell();
 		argc = 0; /* initialize the argument count to zero */
 		token = strtok(line, DELIM); /* get the first token from the line */
 		while (token != NULL) /* loop through all tokens */
