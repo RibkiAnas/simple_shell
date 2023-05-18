@@ -13,6 +13,8 @@
 #define PATH_DELIM ":" /* delimiters for PATH */
 
 /* function prototypes */
+void parse_line(char *line, char **argv, int *argc);
+void execute_command(char *path, char **argv, char *shell_name, int line_number);
 char *find_path(char *command);
 int file_exists(char *path);
 void exit_shell(void);
