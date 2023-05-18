@@ -15,10 +15,12 @@ int main(void)
 	char *token; /* pointer to a token */
 	int status; /* status of the child process */
 	pid_t pid; /* process id of the child */
+	char *path; /* full path of the command */
 
 	while (1) /* main loop */
 	{
-		write(STDOUT_FILENO, PROMPT, strlen(PROMPT)); /* write the prompt to stdout */
+		/* write the prompt to stdout */
+		write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
 		nread = getline(&line, &len, stdin); /* read a line from stdin */
 		if (nread == -1) /* error or end of file */
 		{
@@ -38,6 +40,13 @@ int main(void)
 			token = strtok(NULL, DELIM); /* get the next token from the line */
 		}
 		argv[argc] = NULL; /* set the second argument to NULL */
+		path = find_path(argv[0]); /* find the full path of the command */
+		if (path == NULL) /* command not found in PATH or invalid */
+		{
+			/* print an error message to stderr */
+			fprintf(stderr, "%s: command not found\n", argv[0]);
+			continue; /* skip forking and go to next iteration */
+		}
 		pid = fork(); /* create a new process */
 		if (pid < 0) /* error in fork */
 		{
@@ -46,8 +55,9 @@ int main(void)
 		}
 		else if (pid == 0) /* child process */
 		{
-			execve(argv[0], argv, NULL); /* execute the command with no environment variables */
-			perror(argv[0]); /* print an error message if execve fails */
+			/* execute the command with no environment variables */
+			execve(path, argv, NULL);
+			perror(path); /* print an error message if execve fails */
 			exit(1); /* exit with status 1 */
 		}
 		else /* parent process */

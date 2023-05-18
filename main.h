@@ -10,5 +10,10 @@
 #define MAXLINE 1024 /* maximum length of a command line */
 #define PROMPT "$ " /* prompt symbol */
 #define DELIM " \t\n" /* delimiters for strtok */
+#define PATH_DELIM ":" /* delimiters for PATH */
+
+/* function prototypes */
+char *find_path(char *command);
+int file_exists(char *path);
 
 #endif
