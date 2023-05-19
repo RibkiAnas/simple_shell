@@ -32,8 +32,7 @@ int main(int argc, char **argv)
 		if (line[nread - 1] == '\n') /* remove the trailing newline */
 			line[nread - 1] = '\0';
 
-		if (handle_cases(line) == 0)
-			continue; /*move to the next etration*/
+		handle_cases(line);
 
 		arg_count = 0; /* initialize the argument count to zero */
 		parse_line(line, args, &arg_count);
@@ -52,21 +51,23 @@ int main(int argc, char **argv)
  */
 size_t handle_cases(char *line)
 {
-		if (strcmp(line, "exit") == 0) /* exit the shell if the command is exit */
-			exit_shell();
+	/* exit the shell if the command is exit */
+	if (strcmp(line, "exit") == 0)
+		exit_shell();
 
-		if (strcmp(line, "clear") == 0)
-		{
-			write(STDOUT_FILENO, "\033[2J\033[H", 7);
-			/*this line to clear the screen*/
-			return (0);
-		}
-		if (strcmp(line, "env") == 0)
+	if (strcmp(line, "clear") == 0)
+	{
+		write(STDOUT_FILENO, "\033[2J\033[H", 7);
+		/*this line to clear the screen*/
+		return (0);
+	}
+	if (strcmp(line, "env") == 0)
+	{
 		/* print the environment if the command is env */
-		{
-			print_env(); /* call the print_env function */
-			return (0);
-		}
+		print_env();
+		return (0);
+	}
+	return (0);
 }
 /**
  * parse_line - parsing a given line into an array of arguments
