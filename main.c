@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	{
 		/* write the prompt to stdout */
 		write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
-		nread = getline(&line, &len, stdin); /* read a line from stdin */
+		nread = _getline(&line, &len, stdin); /* read a line from stdin */
 		if (nread == -1) /* error or end of file */
 		{
 			write(STDOUT_FILENO, "\n", 1); /* write a new line to stdout */
@@ -32,7 +32,9 @@ int main(int argc, char **argv)
 		if (line[nread - 1] == '\n') /* remove the trailing newline */
 			line[nread - 1] = '\0';
 
-		handle_cases(line);
+		if (handle_cases(line) == 0)
+/*this to make sure that we use one of those commands exept exit ofc*/
+			continue;
 
 		arg_count = 0; /* initialize the argument count to zero */
 		parse_line(line, args, &arg_count);
@@ -67,7 +69,7 @@ size_t handle_cases(char *line)
 		print_env();
 		return (0);
 	}
-	return (0);
+	return (1); /*this is a sign that there is no command used*/
 }
 /**
  * parse_line - parsing a given line into an array of arguments

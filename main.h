@@ -11,7 +11,7 @@
 #define PROMPT "$ " /* prompt symbol */
 #define DELIM " \t\n" /* delimiters for strtok */
 #define PATH_DELIM ":" /* delimiters for PATH */
-#define READONCE 200 /*Number of char to read*/
+#define READONCE 60 /*Number of char to read*/
 
 /* function prototypes */
 void parse_line(char *line, char **argv, int *argc);
@@ -21,8 +21,8 @@ char *find_path(char *command);
 int file_exists(char *path);
 void exit_shell(void);
 void print_env(void);
-size_t _getchar(void);
-ssize_t _getline(char **buffer);
+int _getchar(void);
+ssize_t _getline(char **bufline, size_t *nread, FILE *stdi);
 size_t handle_cases(char *line);
 
 #endif
