@@ -19,7 +19,7 @@ void execute_command(char *path, char **argv, char *shell_name,
 		int line_number);
 char *find_path(char *command);
 int file_exists(char *path);
-void exit_shell(void);
+void exit_shell(char *line);
 void print_env(char **env);
 int _getchar(void);
 ssize_t _getline(char **bufline, size_t *nread, FILE *stdi);

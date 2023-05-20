@@ -66,7 +66,9 @@ int _getchar(void)
 	{
 		index = 0;
 		read_count = read(STDIN_FILENO, line_buff, READONCE);
-		if (read_count <= 0)
+		if (read_count == 0)
+			return ('\0');
+		if (read_count < 0)
 			return (EOF);
 	}
 	return (line_buff[index++]);

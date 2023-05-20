@@ -33,7 +33,7 @@ int main(int argc, char **argv, char **env)
 		if (line[nread - 1] == '\n') /* remove the trailing newline */
 			line[nread - 1] = '\0';
 
-		if (handle_cases(line, env) == 0)
+		if (handle_cases(line, env) == 0 || nread == 0)
 /*this to make sure that we use one of those commands exept exit ofc*/
 			continue;
 
@@ -42,6 +42,7 @@ int main(int argc, char **argv, char **env)
 
 		path = find_path(args[0]); /* find the full path of the command */
 		execute_command(path, args, argv[0], line_number);
+		free(path); /* Free full_path*/
 		line_number++;
 	}
 	free(line); /* free the buffer */
@@ -57,7 +58,7 @@ size_t handle_cases(char *line, char **env)
 {
 	/* exit the shell if the command is exit */
 	if (strcmp(line, "exit") == 0)
-		exit_shell();
+		exit_shell(line);
 
 	if (strcmp(line, "clear") == 0)
 	{
