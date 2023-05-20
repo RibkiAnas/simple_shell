@@ -20,9 +20,9 @@ void execute_command(char *path, char **argv, char *shell_name,
 char *find_path(char *command);
 int file_exists(char *path);
 void exit_shell(void);
-void print_env(void);
+void print_env(char **env);
 int _getchar(void);
 ssize_t _getline(char **bufline, size_t *nread, FILE *stdi);
-size_t handle_cases(char *line);
+size_t handle_cases(char *line, char **env);
 
 #endif

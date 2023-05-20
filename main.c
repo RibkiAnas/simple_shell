@@ -4,10 +4,11 @@
  * main - Entry point
  * @argc: count of arguments.
  * @argv: arguments
+ * @env: the environment arg
  *
  * Return: 0 if Success
  */
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **env)
 {
 	char *line = NULL; /* buffer for the command line */
 	size_t len = 0; /* length of the buffer */
@@ -32,7 +33,7 @@ int main(int argc, char **argv)
 		if (line[nread - 1] == '\n') /* remove the trailing newline */
 			line[nread - 1] = '\0';
 
-		if (handle_cases(line) == 0)
+		if (handle_cases(line, env) == 0)
 /*this to make sure that we use one of those commands exept exit ofc*/
 			continue;
 
@@ -49,9 +50,10 @@ int main(int argc, char **argv)
 /**
  *handle_cases - this function handle the cases of clear, env and exit commands
  *@line: given string
+ * @env: the environment arg
  *Return: 0 if succes
  */
-size_t handle_cases(char *line)
+size_t handle_cases(char *line, char **env)
 {
 	/* exit the shell if the command is exit */
 	if (strcmp(line, "exit") == 0)
@@ -66,7 +68,7 @@ size_t handle_cases(char *line)
 	if (strcmp(line, "env") == 0)
 	{
 		/* print the environment if the command is env */
-		print_env();
+		print_env(env);
 		return (0);
 	}
 	return (1); /*this is a sign that there is no command used*/
