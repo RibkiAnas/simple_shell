@@ -17,7 +17,7 @@ char *find_path(char *command)
 
 	if (command == NULL || command[0] == '\0') /* invalid command name */
 		return (NULL);
-	if (strchr(command, '/') != NULL) /* command name contains a slash */
+	if (_strchr(command, '/') != NULL) /* command name contains a slash */
 	{
 		if (file_exists(command)) /* file exists and is executable */
 			return (command);
@@ -33,13 +33,13 @@ char *find_path(char *command)
 	dir = strtok(path_copy, PATH_DELIM); /* get the first directory in PATH */
 	while (dir) /* loop through all directories in PATH */
 	{
-		full_path = malloc(strlen(dir) + strlen(command) + 2);
+		full_path = malloc(_strlen(dir) + _strlen(command) + 2);
 		if (!full_path) /* error in malloc */
 			return (NULL);
 		/* concatenate the directory and the command with a slash */
-		strcat(full_path, dir);
-		strcat(full_path, "/");
-		strcat(full_path, command);
+		_strcat(full_path, dir);
+		_strcat(full_path, "/");
+		_strcat(full_path, command);
 		if (file_exists(full_path)) /* file exists and is executable */
 		{
 			free(path_copy); /* free the copy of path_env */
