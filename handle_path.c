@@ -1,6 +1,22 @@
 #include "main.h"
 
 /**
+ * get_path_env - gets the value of the PATH environment variable
+ *
+ * Return: a copy of the value of the PATH environment variable,
+ * NULL if PATH is not set or an error occurs
+ */
+char *get_path_env(void)
+{
+	char *path_env; /* pointer to PATH environment variable value */
+
+	path_env = getenv("PATH"); /* get the value of PATH environment variable */
+	if (!path_env) /* PATH not set */
+		return (NULL);
+	return (strdup(path_env));
+}
+
+/**
 * find_path - find the full path of a
 * command using PATH environment variable
 * @command: command.
@@ -10,46 +26,70 @@
 */
 char *find_path(char *command)
 {
-	char *path_env; /* pointer to PATH environment variable value */
-	char *path_copy; /* copy of path_env for strtok usage */
-	char *dir; /* pointer to a directory in PATH */
-	char *full_path; /* pointer to the full path of the command */
+	char *path_copy, *dir, *full_path; /* copy of path_env for strtok usage */
+	int i = 0, j = 0;
 
 	if (command == NULL || command[0] == '\0') /* invalid command name */
 		return (NULL);
 	if (strchr(command, '/') != NULL) /* command name contains a slash */
 	{
 		if (file_exists(command)) /* file exists and is executable */
-			return (command);
+			return (strdup(command));
 		else
 			return (NULL);
 	}
-	path_env = getenv("PATH"); /* get the value of PATH environment variable */
-	if (!path_env) /* PATH not set */
-		return (NULL);
-	path_copy = strdup(path_env); /* make a copy of path_env for strtok usage */
+	path_copy = get_path_env(); /* make a copy of path_env for strtok usage */
+
 	if (!path_copy) /* error in strdup */
 		return (NULL);
-	dir = strtok(path_copy, PATH_DELIM); /* get the first directory in PATH */
-	while (dir) /* loop through all directories in PATH */
+	/* loop through all directories in PATH */
+	while (path_copy[i] != '\0')
 	{
-		full_path = malloc(strlen(dir) + strlen(command) + 2);
+		j = i;
+		while (path_copy[j] != ':' && path_copy[j] != '\0')
+			j++;
+		dir = strndup(path_copy + i, j - i);
+		full_path = build_full_path(dir, command);
 		if (!full_path) /* error in malloc */
 			return (NULL);
-		/* concatenate the directory and the command with a slash */
-		strcat(full_path, dir);
-		strcat(full_path, "/");
-		strcat(full_path, command);
 		if (file_exists(full_path)) /* file exists and is executable */
 		{
 			free(path_copy); /* free the copy of path_env */
+			free(dir); /* free the directory string */
 			return (full_path); /* return the full path */
 		}
 		free(full_path); /* free the full path */
-		dir = strtok(NULL, PATH_DELIM); /* get the next directory in PATH */
+		free(dir);
+		i = j; /* Move to next directory in PATH */
+		if (path_copy[i] != '\0')
+			i++;
 	}
 	free(path_copy); /* free the copy of path_env */
 	return (NULL); /* command not found in PATH */
+}
+
+/**
+ * build_full_path - build the full path of a command given a
+ * directory and command
+ * @dir: directory.
+ * @command: command.
+ *
+ * Return: full path of a command given a directory and command.
+ */
+char *build_full_path(char *dir, char *command)
+{
+	char *full_path; /* pointer to the full path of the command */
+
+	full_path = malloc(strlen(dir) + strlen(command) + 2);
+	if (!full_path) /* error in malloc */
+		return (NULL);
+
+	/* concatenate the directory and the command with a slash */
+	strcat(full_path, dir);
+	strcat(full_path, "/");
+	strcat(full_path, command);
+
+	return (full_path);
 }
 
 /**

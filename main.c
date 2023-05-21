@@ -82,16 +82,46 @@ size_t handle_cases(char *line, char **env)
  */
 void parse_line(char *line, char **argv, int *argc)
 {
-	char *token;
+	int i = 0; /* index for iterating over the characters in the line string */
+	int j = 0; /* index for storing arguments in the argv array */
+	int start = -1; /* index of the first character of a token */
+	int end = -1; /* index of the last character of a token */
 
-	token = strtok(line, DELIM);/* get the first token from the line*/
-	while (token != NULL)/* loop through all tokens*/
+	while (line[i] != '\0')/* iterate over the characters in the line string */
 	{
-		argv[*argc] = token;/* set the argument to the token*/
-		(*argc)++;/* increment the argument count*/
-		token = strtok(NULL, DELIM);/* get the next token from the line*/
+		/* if the current character is not a delimiter */
+		if (strchr(DELIM, line[i]) == NULL)
+		{
+			if (start == -1)/* if start is not set, set it to the current index */
+				start = i;
+			end = i;/* set end to the current index */
+		}
+		else
+		{
+			if (start != -1 && end != -1)/* if start and end are set */
+			{
+				/* add a null terminator after the last character of the token */
+				line[end + 1] = '\0';
+				/* store the address of the first character */
+				/* of the token in the argv array */
+				argv[j++] = &line[start];
+				start = -1;/* reset start and end */
+				end = -1;
+			}
+		}
+		i++;
 	}
-	argv[*argc] = NULL;/* set the second argument to NULL*/
+
+	/* if start and end are set after the loop */
+	if (start != -1 && end != -1)
+	{
+		/* add a null terminator after the last character of the token */
+		line[end + 1] = '\0';
+		/* store the address of the first character */
+		/* of the token in the argv array */
+		argv[j++] = &line[start];
+	}
+	*argc = j;
 }
 
 /**

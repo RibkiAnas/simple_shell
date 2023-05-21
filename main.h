@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 #define MAXLINE 1024 /* maximum length of a command line */
 #define PROMPT "$ " /* prompt symbol */
@@ -18,6 +19,7 @@ void parse_line(char *line, char **argv, int *argc);
 void execute_command(char *path, char **argv, char *shell_name,
 		int line_number);
 char *find_path(char *command);
+char *build_full_path(char *dir, char *command);
 int file_exists(char *path);
 void exit_shell(char *line);
 void print_env(char **env);
