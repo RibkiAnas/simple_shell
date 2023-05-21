@@ -80,7 +80,7 @@ char *build_full_path(char *dir, char *command)
 {
 	char *full_path; /* pointer to the full path of the command */
 
-	full_path = malloc(strlen(dir) + strlen(command) + 2);
+	full_path = malloc(_strlen(dir) + _strlen(command) + 2);
 	if (!full_path) /* error in malloc */
 		return (NULL);
 
