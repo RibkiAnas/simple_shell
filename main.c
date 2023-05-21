@@ -57,16 +57,16 @@ int main(int argc, char **argv, char **env)
 size_t handle_cases(char *line, char **env)
 {
 	/* exit the shell if the command is exit */
-	if (strcmp(line, "exit") == 0)
+	if (_strcmp(line, "exit") == 0)
 		exit_shell(line);
 
-	if (strcmp(line, "clear") == 0)
+	if (_strcmp(line, "clear") == 0)
 	{
 		write(STDOUT_FILENO, "\033[2J\033[H", 7);
 		/*this line to clear the screen*/
 		return (0);
 	}
-	if (strcmp(line, "env") == 0)
+	if (_strcmp(line, "env") == 0)
 	{
 		/* print the environment if the command is env */
 		print_env(env);

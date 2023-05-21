@@ -11,19 +11,19 @@ char *get_path_env(void)
 	char *path_env; /* pointer to PATH environment variable value */
 
 	path_env = getenv("PATH"); /* get the value of PATH environment variable */
-	if (!path_env) /* PATH not set */
+	if (!path_env)		   /* PATH not set */
 		return (NULL);
 	return (strdup(path_env));
 }
 
 /**
-* find_path - find the full path of a
-* command using PATH environment variable
-* @command: command.
-*
-* Return: full path of a command using PATH
-* environment variable.
-*/
+ * find_path - find the full path of a
+ * command using PATH environment variable
+ * @command: command.
+ *
+ * Return: full path of a command using PATH
+ * environment variable.
+ */
 char *find_path(char *command)
 {
 	char *path_copy, *dir, *full_path; /* copy of path_env for strtok usage */
@@ -31,7 +31,7 @@ char *find_path(char *command)
 
 	if (command == NULL || command[0] == '\0') /* invalid command name */
 		return (NULL);
-	if (strchr(command, '/') != NULL) /* command name contains a slash */
+	if (_strchr(command, '/') != NULL) /* command name contains a slash */
 	{
 		if (file_exists(command)) /* file exists and is executable */
 			return (strdup(command));
@@ -54,8 +54,8 @@ char *find_path(char *command)
 			return (NULL);
 		if (file_exists(full_path)) /* file exists and is executable */
 		{
-			free(path_copy); /* free the copy of path_env */
-			free(dir); /* free the directory string */
+			free(path_copy);    /* free the copy of path_env */
+			free(dir);	    /* free the directory string */
 			return (full_path); /* return the full path */
 		}
 		free(full_path); /* free the full path */
@@ -65,7 +65,7 @@ char *find_path(char *command)
 			i++;
 	}
 	free(path_copy); /* free the copy of path_env */
-	return (NULL); /* command not found in PATH */
+	return (NULL);	 /* command not found in PATH */
 }
 
 /**
@@ -85,19 +85,19 @@ char *build_full_path(char *dir, char *command)
 		return (NULL);
 
 	/* concatenate the directory and the command with a slash */
-	strcat(full_path, dir);
-	strcat(full_path, "/");
-	strcat(full_path, command);
+	_strcat(full_path, dir);
+	_strcat(full_path, "/");
+	_strcat(full_path, command);
 
 	return (full_path);
 }
 
 /**
-* file_exists - check if a file exists and is executable
-* @path: path of the file.
-*
-* Return: 1 if a file exists, 0 if not
-*/
+ * file_exists - check if a file exists and is executable
+ * @path: path of the file.
+ *
+ * Return: 1 if a file exists, 0 if not
+ */
 int file_exists(char *path)
 {
 	/* file exists and is executable */
