@@ -136,14 +136,28 @@ void execute_command(char *path, char **argv,
 {
 	int status;
 	pid_t pid;
+	char digit;
 
 	if (path == NULL) /* command not found in PATH or invalid */
 	{
-		/* print an error message to stderr*/
-		fprintf(stderr, "%s: %d: %s: not found\n", shell_name, line_number, argv[0]);
+		write(STDERR_FILENO, shell_name, _strlen(shell_name));
+		write(STDERR_FILENO, ": ", 2);
+		if (line_number == 0)
+			write(STDERR_FILENO, "0", 1);
+		else
+		{
+			while (line_number > 0)
+			{
+				digit = (line_number % 10) + '0';
+				write(STDERR_FILENO, &digit, 1);
+				line_number /= 10;
+			}
+		}
+		write(STDERR_FILENO, ": ", 2);
+		write(STDERR_FILENO, argv[0], _strlen(argv[0]));
+		write(STDERR_FILENO, ": not found\n", 12);
 		return;
 	}
-
 	pid = fork();/* create a new process*/
 	if (pid < 0)/* error in fork*/
 	{
@@ -152,8 +166,7 @@ void execute_command(char *path, char **argv,
 	}
 	else if (pid == 0)/* child process*/
 	{
-		/* execute the command with no environment variables*/
-		execve(path, argv, NULL);
+		execve(path, argv, NULL);/*execute the command with no env variables*/
 		perror(path);/* print an error message if execve fails*/
 		exit(1);/* exit with status 1*/
 	}
