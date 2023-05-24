@@ -9,11 +9,11 @@
 #include <stdbool.h>
 #include <signal.h>
 
-#define MAXLINE 1024   /* maximum length of a command line */
-#define PROMPT "$ "    /* prompt symbol */
-#define DELIM " \t\n"  /* delimiters for strtok */
-#define PATH_DELIM ":" /* delimiters for PATH */
-#define READONCE 60    /*Number of char to read*/
+#define MAXLINE 1024	  /* maximum length of a command line */
+#define PROMPT "$ "	  /* prompt symbol */
+#define DELIM " \t\r\n\a" /* delimiters for strtok */
+#define PATH_DELIM ":"	  /* delimiters for PATH */
+#define READONCE 60	  /*Number of char to read*/
 
 /* function prototypes */
 void sigint_handler(int sig);

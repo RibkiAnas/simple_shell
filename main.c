@@ -107,7 +107,7 @@ void parse_line(char *line, char **argv, int *argc)
 	while (line[i] != '\0') /* iterate over the characters in the line string */
 	{
 		/* if the current character is not a delimiter */
-		if (strchr(DELIM, line[i]) == NULL)
+		if (strchr(DELIM, line[i]) == NULL && line[i] != '\n')
 		{
 			if (start == -1) /* if start is not set, set it to the current index */
 				start = i;
@@ -157,6 +157,8 @@ void execute_command(char *path, char **argv,
 	pid_t pid;
 	char digit;
 
+	if (path == NULL && (argv[0] == NULL || argv[0][0] == '\0'))
+		return;	  /* handle empty command */
 	if (path == NULL) /* command not found in PATH or invalid */
 	{
 		write(STDERR_FILENO, shell_name, _strlen(shell_name));
@@ -189,8 +191,6 @@ void execute_command(char *path, char **argv,
 		perror(path);		 /* print an error message if execve fails*/
 		exit(1);		 /* exit with status 1*/
 	}
-	else /* parent process*/
-	{
+	else		       /* parent process*/
 		wait(&status); /* wait for the child to terminate*/
-	}
 }
