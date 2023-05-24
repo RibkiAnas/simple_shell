@@ -23,7 +23,7 @@ int main(int argc, char **argv, char **env)
 		if (isatty(STDIN_FILENO) == 0) /* check if data is piped */
 			pipe = true;
 		if (isatty(STDIN_FILENO) != 0)
-			write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
+			write(STDOUT_FILENO, PROMPT, _strlen(PROMPT));
 		nread = _getline(&line, &len, stdin); /* read a line from stdin */
 		if (nread == -1)		      /* error or end of file */
 		{

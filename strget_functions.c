@@ -104,7 +104,7 @@ char *_getenv(char *varenv, char **env)
 	if (varenv == NULL || env == NULL)
 		return (NULL);
 
-	for (i = 0; env[i] != NULL; i++ )
+	for (i = 0; env[i] != NULL; i++)
 	{
 		variable = _strdup(env[i]);
 		delime = _strchr(variable, '=');
