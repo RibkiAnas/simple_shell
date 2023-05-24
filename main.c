@@ -10,44 +10,61 @@
  */
 int main(int argc, char **argv, char **env)
 {
-	char *line = NULL; /* buffer for the command line */
-	size_t len = 0; /* length of the buffer */
-	ssize_t nread; /* number of bytes read */
-	char *args[MAXLINE]; /* array of arguments for execve */
-	int arg_count; /* number of arguments */
-	char *path; /* full path of the command */
-	int line_number = 1;
+	char *args[MAXLINE], *path, *line = NULL;
+	size_t len = 0;			/* length of the buffer */
+	ssize_t nread;			/* number of bytes read */
+	int arg_count, line_number = 1; /* number of arguments */
+	bool pipe = false;
 
-	(void)argc; /* explicitly indicate that argc is unused */
-
-	while (1) /* main loop */
+	(void)argc;	   /* explicitly indicate that argc is unused */
+	while (1 && !pipe) /* main loop */
 	{
-		/* write the prompt to stdout */
-		write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
+		if (isatty(STDIN_FILENO) == 0) /* check if data is piped */
+			pipe = true;
+		if (isatty(STDIN_FILENO) != 0)
+			write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
 		nread = _getline(&line, &len, stdin); /* read a line from stdin */
-		if (nread == -1) /* error or end of file */
+		if (nread == -1)		      /* error or end of file */
 		{
-			write(STDOUT_FILENO, "\n", 1); /* write a new line to stdout */
-			break; /* exit the loop */
+			perror("_getline");
+			free(line); /* free memory if _getline fails */
+			exit(1);
 		}
 		if (line[nread - 1] == '\n') /* remove the trailing newline */
 			line[nread - 1] = '\0';
-
-		if (handle_cases(line, env) == 0 || nread == 0)
-/*this to make sure that we use one of those commands exept exit ofc*/
+		if (_strcmp(line, "\033[D") == 0 || _strcmp(line, "\033[C") == 0)
+		{
+			write(STDERR_FILENO, argv[0], _strlen(argv[0]));
+			write(STDERR_FILENO, ": not found\n", 12);
 			continue;
-
-		arg_count = 0; /* initialize the argument count to zero */
+		}
+		if (handle_cases(line, env) == 0 || nread == 0)
+			continue;
+		signal(SIGINT, sigint_handler); /* register the signal handler */
+		arg_count = 0;			/* initialize the argument count to zero */
 		parse_line(line, args, &arg_count);
-
 		path = find_path(args[0]); /* find the full path of the command */
-		execute_command(path, args, argv[0], line_number);
+		execute_command(path, args, argv[0], line_number, env);
 		free(path); /* Free full_path*/
 		line_number++;
 	}
 	free(line); /* free the buffer */
 	return (0); /* exit with status 0 */
 }
+
+/**
+ * sigint_handler - handles the SIGINT signal
+ * @sig: signal number
+ *
+ * Return: void
+ */
+void sigint_handler(int sig)
+{
+	(void)sig;		       /* explicitly indicate that sig is unused */
+	write(STDOUT_FILENO, "\n", 1); /* write a newline character to stdout */
+	exit(0);		       /* exit with status 0 */
+}
+
 /**
  *handle_cases - this function handle the cases of clear, env and exit commands
  *@line: given string
@@ -82,30 +99,30 @@ size_t handle_cases(char *line, char **env)
  */
 void parse_line(char *line, char **argv, int *argc)
 {
-	int i = 0; /* index for iterating over the characters in the line string */
-	int j = 0; /* index for storing arguments in the argv array */
+	int i = 0;	/* index for iterating over the characters in the line string */
+	int j = 0;	/* index for storing arguments in the argv array */
 	int start = -1; /* index of the first character of a token */
-	int end = -1; /* index of the last character of a token */
+	int end = -1;	/* index of the last character of a token */
 
-	while (line[i] != '\0')/* iterate over the characters in the line string */
+	while (line[i] != '\0') /* iterate over the characters in the line string */
 	{
 		/* if the current character is not a delimiter */
 		if (strchr(DELIM, line[i]) == NULL)
 		{
-			if (start == -1)/* if start is not set, set it to the current index */
+			if (start == -1) /* if start is not set, set it to the current index */
 				start = i;
-			end = i;/* set end to the current index */
+			end = i; /* set end to the current index */
 		}
 		else
 		{
-			if (start != -1 && end != -1)/* if start and end are set */
+			if (start != -1 && end != -1) /* if start and end are set */
 			{
 				/* add a null terminator after the last character of the token */
 				line[end + 1] = '\0';
 				/* store the address of the first character */
 				/* of the token in the argv array */
 				argv[j++] = &line[start];
-				start = -1;/* reset start and end */
+				start = -1; /* reset start and end */
 				end = -1;
 			}
 		}
@@ -130,9 +147,11 @@ void parse_line(char *line, char **argv, int *argc)
  * @argv: arguments.
  * @shell_name: name of the shell.
  * @line_number: number of the line.
+ * @env: the environment arg.
  */
 void execute_command(char *path, char **argv,
-		     char *shell_name, int line_number)
+		     char *shell_name, int line_number,
+		     char **env)
 {
 	int status;
 	pid_t pid;
@@ -158,20 +177,20 @@ void execute_command(char *path, char **argv,
 		write(STDERR_FILENO, ": not found\n", 12);
 		return;
 	}
-	pid = fork();/* create a new process*/
-	if (pid < 0)/* error in fork*/
+	pid = fork(); /* create a new process*/
+	if (pid < 0)  /* error in fork*/
 	{
-		perror("fork");/* print an error message*/
-		exit(1);/* exit with status 1*/
+		perror("fork"); /* print an error message*/
+		exit(1);	/* exit with status 1*/
 	}
-	else if (pid == 0)/* child process*/
+	else if (pid == 0) /* child process*/
 	{
-		execve(path, argv, NULL);/*execute the command with no env variables*/
-		perror(path);/* print an error message if execve fails*/
-		exit(1);/* exit with status 1*/
+		execve(path, argv, env); /*execute the command with no env variables*/
+		perror(path);		 /* print an error message if execve fails*/
+		exit(1);		 /* exit with status 1*/
 	}
-	else/* parent process*/
+	else /* parent process*/
 	{
-		wait(&status);/* wait for the child to terminate*/
+		wait(&status); /* wait for the child to terminate*/
 	}
 }
