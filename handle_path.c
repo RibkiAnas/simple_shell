@@ -2,6 +2,7 @@
 
 /**
  * get_path_env - gets the value of the PATH environment variable
+ * @env: the environment arg
  *
  * Return: a copy of the value of the PATH environment variable,
  * NULL if PATH is not set or an error occurs
@@ -10,7 +11,7 @@ char *get_path_env(char **env)
 {
 	char *path_env; /* pointer to PATH environment variable value */
 
-	path_env = _getenv("PATH", env); /* get the value of PATH environment variable */
+	path_env = _getenv("PATH", env); /* get the value of PATH env variable */
 	if (!path_env)			 /* PATH not set */
 		return (NULL);
 	return (_strdup(path_env));
@@ -20,6 +21,7 @@ char *get_path_env(char **env)
  * find_path - find the full path of a
  * command using PATH environment variable
  * @command: command.
+ * @env: the environment arg
  *
  * Return: full path of a command using PATH
  * environment variable.
