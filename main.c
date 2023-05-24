@@ -16,8 +16,9 @@ int main(int argc, char **argv, char **env)
 	int arg_count, line_number = 1; /* number of arguments */
 	bool pipe = false;
 
-	(void)argc;	   /* explicitly indicate that argc is unused */
-	while (1 && !pipe) /* main loop */
+	(void)argc;			/* explicitly indicate that argc is unused */
+	signal(SIGINT, sigint_handler); /* register the signal handler */
+	while (1 && !pipe)		/* main loop */
 	{
 		if (isatty(STDIN_FILENO) == 0) /* check if data is piped */
 			pipe = true;
@@ -40,8 +41,7 @@ int main(int argc, char **argv, char **env)
 		}
 		if (handle_cases(line, env) == 0 || nread == 0)
 			continue;
-		signal(SIGINT, sigint_handler); /* register the signal handler */
-		arg_count = 0;			/* initialize the argument count to zero */
+		arg_count = 0; /* initialize the argument count to zero */
 		parse_line(line, args, &arg_count);
 		path = find_path(args[0]); /* find the full path of the command */
 		execute_command(path, args, argv[0], line_number, env);

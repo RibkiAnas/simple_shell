@@ -1,3 +1,5 @@
 /hack
 main_test.c
 .*
+alx_test_suite
+MandatoryChecker.sh
