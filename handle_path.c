@@ -6,14 +6,14 @@
  * Return: a copy of the value of the PATH environment variable,
  * NULL if PATH is not set or an error occurs
  */
-char *get_path_env(void)
+char *get_path_env(char **env)
 {
 	char *path_env; /* pointer to PATH environment variable value */
 
-	path_env = getenv("PATH"); /* get the value of PATH environment variable */
-	if (!path_env)		   /* PATH not set */
+	path_env = _getenv("PATH", env); /* get the value of PATH environment variable */
+	if (!path_env)			 /* PATH not set */
 		return (NULL);
-	return (strdup(path_env));
+	return (_strdup(path_env));
 }
 
 /**
@@ -24,7 +24,7 @@ char *get_path_env(void)
  * Return: full path of a command using PATH
  * environment variable.
  */
-char *find_path(char *command)
+char *find_path(char *command, char **env)
 {
 	char *path_copy, *dir, *full_path; /* copy of path_env for strtok usage */
 	int i = 0, j = 0;
@@ -34,13 +34,13 @@ char *find_path(char *command)
 	if (_strchr(command, '/') != NULL) /* command name contains a slash */
 	{
 		if (file_exists(command)) /* file exists and is executable */
-			return (strdup(command));
+			return (_strdup(command));
 		else
 			return (NULL);
 	}
-	path_copy = get_path_env(); /* make a copy of path_env for strtok usage */
+	path_copy = get_path_env(env); /* make a copy of path_env for strtok usage */
 
-	if (!path_copy) /* error in strdup */
+	if (!path_copy) /* error in _strdup */
 		return (NULL);
 	/* loop through all directories in PATH */
 	while (path_copy[i] != '\0')
@@ -48,7 +48,7 @@ char *find_path(char *command)
 		j = i;
 		while (path_copy[j] != ':' && path_copy[j] != '\0')
 			j++;
-		dir = strndup(path_copy + i, j - i);
+		dir = _strndup(path_copy + i, j - i);
 		full_path = build_full_path(dir, command);
 		if (!full_path) /* error in malloc */
 			return (NULL);

@@ -43,7 +43,7 @@ int main(int argc, char **argv, char **env)
 			continue;
 		arg_count = 0; /* initialize the argument count to zero */
 		parse_line(line, args, &arg_count);
-		path = find_path(args[0]); /* find the full path of the command */
+		path = find_path(args[0], env); /* find the full path of the command */
 		execute_command(path, args, argv[0], line_number, env);
 		free(path); /* Free full_path*/
 		line_number++;

@@ -20,7 +20,8 @@ void sigint_handler(int sig);
 void parse_line(char *line, char **argv, int *argc);
 void execute_command(char *path, char **argv, char *shell_name,
 		     int line_number, char **env);
-char *find_path(char *command);
+char *get_path_env(char **env);
+char *find_path(char *command, char **env);
 char *build_full_path(char *dir, char *command);
 int file_exists(char *path);
 void exit_shell(char *line);
@@ -33,4 +34,9 @@ int _getchar(void);
 ssize_t _getline(char **bufline, size_t *nread, FILE *stdi);
 size_t handle_cases(char *line, char **env);
 char *_strchr(char *s, char c);
+char *_strdup(char *str);
+int _isspace(int c);
+char *_strndup(char *str, size_t n);
+char *_strncpy(char *dest, char *src, int n);
+char *_getenv(char *varenv, char **env);
 #endif
