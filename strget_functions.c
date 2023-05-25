@@ -28,17 +28,51 @@ char *_strdup(char *str)
 	return (p);
 }
 /**
- *_isspace - this function to return if is space or not
- *@c: char to see if space
- *Return: 1 if Character is a whitespace character else 0
+ *_strcspn - function that calculates the length of the initial str in bytes
+ *@reject: string of chars not allowed in initial
+ *@str: string to search in
+ *Return: the numbr of byte
  */
-int _isspace(int c)
+size_t _strcspn(char *str, char *reject)
 {
-	if (c == ' ' || c == '\t' || c == '\n')
-		return (1);
-	else
-		return (0);
+	size_t count = 0;
+	const char *p;
+
+	for (; *str != '\0'; str++)
+	{
+		for (p = reject; *p != '\0'; p++)
+		{
+			if (*str == *p)
+			{
+				return (count);
+			}
+		}
+		count++;
+	}
+	return (count);
 }
+/**
+ * _strncmp - compare two string up to specifec number of char
+ *@str1: string number1
+ *@str2: string number 2
+ *@n: n NUmber of bytes
+ *Return: 0 if secuss other niumber if fals
+ */
+int _strncmp(char *str1, char *str2, size_t n)
+{
+	size_t i;
+
+	for (i = 0; i < n; i++)
+	{
+		if (str1[i] != str2[i] || str1[i] == '\0' || str2[i] == '\0')
+		{
+		return ((unsigned char)str1[i] - (unsigned char)str2[i]);
+		}
+	}
+	return (0);
+}
+
+
 /**
  *_strndup - this function to deplucat n char from str
  *@str: string to be dumlcat
@@ -88,39 +122,4 @@ char *_strncpy(char *dest, char *src, int n)
 	}
 
 	return (dest);
-}
-
-/**
- *_getenv - function to get a env variable value
- *@varenv: this var hold the env varible we want
- *@env: the envaremnt variables all string
- *Return: the value of the specf env varaible
- */
-char *_getenv(char *varenv, char **env)
-{
-	int i;
-	char *variable, *delime, *value;
-
-	if (varenv == NULL || env == NULL)
-		return (NULL);
-
-	for (i = 0; env[i] != NULL; i++)
-	{
-		variable = _strdup(env[i]);
-		delime = _strchr(variable, '=');
-		if (delime == NULL)
-		{
-			free(variable);
-			continue;
-		}
-		*delime = '\0';
-		if (_strcmp(variable, varenv) == 0)
-		{
-			value = _strdup(delime + 1);
-			free(variable);
-			return (value);
-		}
-		free(variable);
-	}
-	return (NULL);
 }

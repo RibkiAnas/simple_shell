@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 #include <signal.h>
+#include <stddef.h>
 
 #define MAXLINE 1024	  /* maximum length of a command line */
 #define PROMPT "$ "	  /* prompt symbol */
@@ -39,4 +40,6 @@ int _isspace(int c);
 char *_strndup(char *str, size_t n);
 char *_strncpy(char *dest, char *src, int n);
 char *_getenv(char *varenv, char **env);
+int _strncmp(char *str1, char *str2, size_t n);
+size_t _strcspn(char *str, char *reject);
 #endif

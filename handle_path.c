@@ -11,7 +11,9 @@ char *get_path_env(char **env)
 {
 	char *path_env; /* pointer to PATH environment variable value */
 
-	path_env = _getenv("PATH", env); /* get the value of PATH env variable */
+	(void)env;
+
+	path_env = _getenv("PATH"); /* get the value of PATH env variable */
 	if (!path_env)			 /* PATH not set */
 		return (NULL);
 	return (_strdup(path_env));
